@@ -26,6 +26,11 @@ dependencies:
 - hashable
 - mtl
 - QuickCheck
+- lens
+- containers
+- pretty
+- comonad
+- deriving-compat
 
 
 library:
