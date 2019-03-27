@@ -1,3 +1,4 @@
+-- Inspired by https://brianmckenna.org/blog/type_annotation_cofree
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE DeriveFoldable #-}
 {-# LANGUAGE DeriveFunctor #-}
