@@ -22,15 +22,16 @@ description:         Please see the README on GitHub at <https://github.com/gith
 dependencies:
 - base >= 4.7 && < 5
 - array
+- comonad
+- containers
+- deriving-compat
 - free
 - hashable
-- mtl
-- QuickCheck
 - lens
-- containers
+- mtl
 - pretty
-- comonad
-- deriving-compat
+- QuickCheck
+- recursion-schemes
 
 
 library:
