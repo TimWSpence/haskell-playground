@@ -11,8 +11,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE RankNTypes #-}
 
-module ExtensibleEffects(
-                        ) where
+module TExtensibleEffects where
 
 import Control.Monad
 import Unsafe.Coerce
@@ -79,7 +78,7 @@ runM (Impure r arrs) = extract r >>= runM . qApp arrs
 data Reader r a where
   Ask :: Reader i i
 
-ask :: (Member (Reader i) r) => Eff r i
+ask :: Member (Reader i) r => Eff r i
 ask = send $ Ask
 
 runReader :: i -> Eff (Reader i ': r) a -> Eff r a
@@ -99,12 +98,45 @@ data State s a where
   Get :: State s s
   Put :: s -> State s ()
 
-prog :: Eff (Reader String ': Writer [String] ': '[]) String
+get :: Member (State s) r => Eff r s
+get = send $ Get
+
+put :: Member (State s) r => s -> Eff r ()
+put s = send $ Put s
+
+modify :: Member (State s) r => (s -> s) -> Eff r ()
+modify f = do
+  current <- get
+  let updated = f current
+  put updated
+
+runState :: s -> Eff (State s ': r) a -> Eff r a
+runState s (Pure a) = return a
+runState s (Impure u q) = case decomp u of
+  Left u' -> Impure u' (tsingleton $ k s)
+  Right st -> case st of
+    Get -> runState s $ qApp q s
+    Put s' -> runState s' $ qApp q ()
+  where
+    k s = qComp q (runState s)
+
+prog :: (Member (Reader String) r, Member (Writer [String]) r, Member (State String) r) => Eff r String
 prog = do
   r <- ask
+  s <- get @String
+  tell [s]
+  put "baz"
   tell ["foo"]
+  t <- get @String
+  tell [t]
   tell [r]
   return r
+
+app ::  Eff (Reader String ': Writer [String] ': State String ': '[]) a -> Eff (Reader String ': Writer [String] ': State String ': '[]) a
+app = id
+
+runProg :: (String, [String])
+runProg = run . runState "state" . runWriter [] . runReader "foo" $ app prog
 
 --------------------------------------------------- FTCQueue
 
