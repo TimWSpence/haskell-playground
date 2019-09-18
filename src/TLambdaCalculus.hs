@@ -2,6 +2,8 @@
 
 module TLambdaCalculus where
 
+-- We use De Bruijn indices for variables to avoid
+-- various kinds of alpha-equivalence pain
 newtype Idx = Idx { getIdx :: Int } deriving (Eq, Ord, Num, Show)
 
 data Exp = EVar Idx
@@ -22,4 +24,4 @@ subst n e (EApp e1 e2) = EApp (subst n e e1) (subst n e e2)
 betaReduce :: Exp -> Exp
 betaReduce e@(EVar _) = e
 betaReduce e@(ELambda e1) = e
-betaReduce (EApp e1 e2) = subst 0 (betaReduce e1) (betaReduce e2)
+betaReduce (EApp e1 e2) = betaReduce $ subst 0 e1 (betaReduce e2)
