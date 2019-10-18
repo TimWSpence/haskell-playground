@@ -33,6 +33,7 @@ dependencies:
 - polysemy-plugin
 - pretty
 - QuickCheck
+- random
 - recursion-schemes
 
 
