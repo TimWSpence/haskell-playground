@@ -1,9 +1,9 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DerivingVia #-}
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE TypeApplications #-}
-{-# LANGUAGE FlexibleContexts #-}
 
 module Libraries.CapabilitySample where
 
@@ -11,6 +11,7 @@ import Capability.Reader
 import Capability.Sink
 import Capability.Source
 import Capability.State
+import Capability.Writer
 import Control.Monad.Reader (ReaderT (..))
 import Data.IORef
 import GHC.Generics
@@ -20,19 +21,26 @@ newtype App a = App {runApp :: ReaderT State IO a}
   deriving
     (HasSource "counter" Int, HasSink "counter" Int, HasState "counter" Int)
     via ReaderIORef (Field "counter" () (MonadReader (ReaderT State IO)))
+  deriving
+    (HasSink "log" [String], HasWriter "log" [String])
+    via WriterLog (ReaderIORef (Field "log" () (MonadReader (ReaderT State IO))))
 
 data State = State
-  { counter :: IORef Int
+  { counter :: IORef Int,
+    log :: IORef [String]
   }
   deriving (Generic)
 
-prog :: HasState "counter" Int m => m Int
-prog = do
-  modify @"counter" (+1)
-  modify @"counter" (+1)
+prog :: (HasState "counter" Int m, HasWriter "log" [String] m) => m (Int, [String])
+prog = listen @"log" $ do
+  tell @"log" ["first"]
+  modify @"counter" (+ 1)
+  modify @"counter" (+ 1)
+  tell @"log" ["second"]
   get @"counter"
 
-run :: IO Int
+run :: IO (Int, [String])
 run = do
-  ref <- newIORef 0
-  flip runReaderT (State ref) . runApp $ prog
+  c <- newIORef 0
+  l <- newIORef []
+  flip runReaderT (State c l) . runApp $ prog
