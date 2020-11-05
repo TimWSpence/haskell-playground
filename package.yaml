@@ -21,8 +21,12 @@ description:         Please see the README on GitHub at <https://github.com/TimW
 
 dependencies:
 - base >= 4.7 && < 5
+- bytestring
 - dhall
 - free
+- generic-lens
+- lens
+- serialise
 
 library:
   source-dirs: src

@@ -3,7 +3,7 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeApplications #-}
 
-module DhallSample
+module Libraries.DhallSample
   (
   )
 where
@@ -16,11 +16,10 @@ import Dhall.Binary
 import Dhall.Core
 import Numeric.Natural
 
-data Config
-  = Config
-      { port :: Natural,
-        host :: String
-      }
+data Config = Config
+  { port :: Natural,
+    host :: String
+  }
   deriving (Show, Generic)
 
 deriving instance FromDhall Config
