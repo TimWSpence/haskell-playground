@@ -12,6 +12,7 @@ import Control.Lens
 import Data.Function ((&))
 import Data.Generics.Product.Fields
 import Data.Generics.Product.Types
+import Data.Generics.Product.Positions
 import GHC.Generics
 
 data Pet = Dog String | Cat String deriving (Generic, Show)
@@ -29,10 +30,11 @@ data Address = Address
   }
   deriving (Generic, Show)
 
-data Family = Family {
-  members :: [Person],
-  address :: Address
-                     } deriving (Generic, Show)
+data Family = Family
+  { members :: [Person],
+    address :: Address
+  }
+  deriving (Generic, Show)
 
 tim :: Person
 tim = Person "tim" 31
@@ -43,7 +45,7 @@ laura = Person "laura" 32
 home :: Address
 home = Address "some street" 4 Nothing
 
-family  :: Family
+family :: Family
 family = Family [tim, laura] home
 
 -- Access by field name
@@ -63,3 +65,6 @@ example5 = family & field' @"members" . traverse . field' @"name" %~ (<> " spenc
 
 -- Access all strings recursively (names from people, street from address)
 example6 = family ^.. types @String
+
+-- Access all names by position
+example7 = family ^.. position @1 . traverse . position @1
