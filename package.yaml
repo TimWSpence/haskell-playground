@@ -28,6 +28,7 @@ dependencies:
 - generic-lens
 - lens
 - mtl
+- random
 - serialise
 
 library:

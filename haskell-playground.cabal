@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8a3953c4d173ec57968a14c2c1f04d26ff5564338ed95c090cc524d78c7de94d
+-- hash: 631989783a142dcca4cc95faf6e15f3f8e116bb4fb975a0e0a3eaf21d04b2606
 
 name:           haskell-playground
 version:        0.1.0.0
@@ -30,6 +30,7 @@ library
       Lib
       Libraries.CapabilitySample
       Libraries.DhallSample
+      Libraries.FreeSample
       Libraries.GenericLensSample
   other-modules:
       Paths_haskell_playground
@@ -44,6 +45,7 @@ library
     , generic-lens
     , lens
     , mtl
+    , random
     , serialise
   default-language: Haskell2010
 
@@ -64,6 +66,7 @@ executable haskell-playground-exe
     , haskell-playground
     , lens
     , mtl
+    , random
     , serialise
   default-language: Haskell2010
 
@@ -85,5 +88,6 @@ test-suite haskell-playground-test
     , haskell-playground
     , lens
     , mtl
+    , random
     , serialise
   default-language: Haskell2010
